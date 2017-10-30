@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         textView_toc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("ggg","ggg");
+                Log.e("ggg", "ggg");
                 startActivity(new Intent(MainActivity.this, ConstraintActivity.class));
             }
         });
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         myWebView.loadUrl("http://www.example.com");
         setTextLinkOpenByWebView(MainActivity.this, testString);
+        getUrl(testString);
     }
 
     public static SpannableStringBuilder setTextLinkOpenByWebView(final Context context, String answerString) {
@@ -73,5 +74,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return new SpannableStringBuilder(answerString);
+    }
+
+    private void getUrl(String answerString) {
+        Spanned htmlString = Html.fromHtml(answerString);
+        if (htmlString instanceof SpannableStringBuilder) {
+            SpannableStringBuilder spannableStringBuilder = (SpannableStringBuilder) htmlString;
+            // 取得与a标签相关的Span
+            Object[] objs = spannableStringBuilder.getSpans(0, spannableStringBuilder.length(), URLSpan.class);
+            if (null != objs && objs.length != 0) {
+                for (Object obj : objs) {
+                    int start = spannableStringBuilder.getSpanStart(obj);
+                    int end = spannableStringBuilder.getSpanEnd(obj);
+                    if (obj instanceof URLSpan) {
+                        //先移除这个Span，再新添加一个自己实现的Span。
+                        URLSpan span = (URLSpan) obj;
+                        final String url = span.getURL();
+                        Log.e("url2", url);
+                    }
+                }
+            }
+        }
     }
 }
